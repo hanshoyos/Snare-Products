@@ -8,7 +8,7 @@ param (
 Import-Module GroupPolicy
 
 # Create the GPO
-New-GPO -Name $GpoName -Comment $GpoDescription
+$gpo = New-GPO -Name $GpoName -Comment $GpoDescription
 
 # Create the XML for the drive map
 $driveMapXML = @"
@@ -27,9 +27,8 @@ if (-not (Test-Path $gpoBackupPath)) {
 Backup-GPO -Name $GpoName -Path $gpoBackupPath
 
 # Get the path to the GPO XML file
-$gpo = Get-GPO -Name $GpoName
-$gpoXMLPath = Join-Path -Path $gpoBackupPath -ChildPath $gpo.GPOID
-$gpoXMLPath = Join-Path -Path $gpoXMLPath -ChildPath "Machine\Preferences\Drives\Drives.xml"
+$gpoXMLPath = Join-Path -Path $gpoBackupPath -ChildPath $gpo.ID
+$gpoXMLPath = Join-Path -Path $gpoXMLPath -ChildPath "User\Preferences\Drives\Drives.xml"
 
 # Write the drive map XML to the XML file
 $driveMapXML | Out-File -FilePath $gpoXMLPath -Encoding ASCII
